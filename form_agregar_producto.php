@@ -11,9 +11,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre_producto = trim($_POST['nombre_producto']);
     $precio = trim($_POST['precio']);
     $cantidad = trim($_POST['cantidad']);
+    $presentacion = trim($_POST['presentacion']);
+    $marca = trim($_POST['marca']);
+    $fecha_produccion = $_POST['fecha_produccion'];
+    $fecha_vencimiento = $_POST['fecha_vencimiento'];
 
     // Validación simple
-    if (empty($nombre_producto) || empty($precio) || empty($cantidad)) {
+    if (empty($nombre_producto) || empty($precio) || empty($cantidad) || empty($presentacion) || empty($marca) || empty($fecha_produccion) || empty($fecha_vencimiento)) {
         $mensaje = "Todos los campos son obligatorios.";
         $tipo_alerta = "danger"; // Alerta de error
     } else if (!is_numeric($precio) || !is_numeric($cantidad)) {
@@ -21,8 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $tipo_alerta = "danger"; // Alerta de error
     } else {
         // Preparar la consulta para evitar inyecciones SQL
-        $stmt = $conexion->prepare("INSERT INTO Productos (nombre_producto, precio, cantidad) VALUES (?, ?, ?)");
-        $stmt->bind_param("sdi", $nombre_producto, $precio, $cantidad); // "sdi" significa: string, double, integer
+        $stmt = $conexion->prepare("INSERT INTO Productos (nombre_producto, precio, cantidad, presentacion, marca, fecha_produccion, fecha_vencimiento) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sdissss", $nombre_producto, $precio, $cantidad, $presentacion, $marca, $fecha_produccion, $fecha_vencimiento); // "sdissss" significa: string, double, integer, string, string, string, string
 
         if ($stmt->execute()) {
             $mensaje = "Producto agregado exitosamente.";
@@ -61,15 +65,31 @@ $conexion->close(); // Cerrar la conexión
         <form method="POST" action="form_agregar_producto.php">
             <div class="form-group">
                 <label for="nombre_producto">Nombre del Producto</label>
-                <input type="text" class="form-control" id="nombre_producto" name="nombre_producto" required>
+                <input type="text" class="form-control" id="nombre_producto" name="nombre_producto" placeholder="Ejemplo: Televisor Samsung 42 pulgadas" required>
             </div>
             <div class="form-group">
                 <label for="precio">Precio</label>
-                <input type="number" class="form-control" id="precio" name="precio" step="0.01" required>
+                <input type="number" class="form-control" id="precio" name="precio" step="0.01" placeholder="Ejemplo: 399.99" required>
             </div>
             <div class="form-group">
                 <label for="cantidad">Cantidad</label>
-                <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+                <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Ejemplo: 10" required>
+            </div>
+            <div class="form-group">
+                <label for="presentacion">Presentación</label>
+                <input type="text" class="form-control" id="presentacion" name="presentacion" placeholder="Ejemplo: Caja, Botella, Bolsa" required>
+            </div>
+            <div class="form-group">
+                <label for="marca">Marca</label>
+                <input type="text" class="form-control" id="marca" name="marca" placeholder="Ejemplo: Samsung, LG, Apple" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_produccion">Fecha de Producción</label>
+                <input type="date" class="form-control" id="fecha_produccion" name="fecha_produccion" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_vencimiento">Fecha de Vencimiento</label>
+                <input type="date" class="form-control" id="fecha_vencimiento" name="fecha_vencimiento" required>
             </div>
             <button type="submit" class="btn btn-primary">Agregar Producto</button>
             <a href="index.php" class="btn btn-secondary">Volver a la Página Principal</a>
