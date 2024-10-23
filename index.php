@@ -88,6 +88,10 @@
                         <th>Nombre</th>
                         <th>Precio</th>
                         <th>Cantidad</th>
+                        <th>Presentación</th> <!-- Nueva columna -->
+                        <th>Marca</th> <!-- Nueva columna -->
+                        <th>Fecha de Producción</th> <!-- Nueva columna -->
+                        <th>Fecha de Vencimiento</th> <!-- Nueva columna -->
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -102,6 +106,10 @@
                                     <td>{$fila['nombre_producto']}</td>
                                     <td>{$fila['precio']}</td>
                                     <td>{$fila['cantidad']}</td>
+                                    <td>{$fila['presentacion']}</td> <!-- Mostrar presentación -->
+                                    <td>{$fila['marca']}</td> <!-- Mostrar marca -->
+                                    <td>{$fila['fecha_produccion']}</td> <!-- Mostrar fecha de producción -->
+                                    <td>{$fila['fecha_vencimiento']}</td> <!-- Mostrar fecha de vencimiento -->
                                     <td>
                                         <form action='modificar_producto.php' method='POST' class='d-inline'>
                                             <input type='hidden' name='id' value='{$fila['id']}'>
@@ -115,7 +123,7 @@
                                 </tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='5'>No se encontraron productos</td></tr>";
+                        echo "<tr><td colspan='9'>No se encontraron productos</td></tr>";
                     }
                     ?>
                 </tbody>
