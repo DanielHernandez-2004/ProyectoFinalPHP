@@ -13,21 +13,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre_producto = filter_input(INPUT_POST, 'nombre_producto', FILTER_SANITIZE_SPECIAL_CHARS);
     $precio = filter_input(INPUT_POST, 'precio', FILTER_VALIDATE_FLOAT);
     $cantidad = filter_input(INPUT_POST, 'cantidad', FILTER_VALIDATE_INT);
+    $presentacion = filter_input(INPUT_POST, 'presentacion', FILTER_SANITIZE_SPECIAL_CHARS);
+    $marca = filter_input(INPUT_POST, 'marca', FILTER_SANITIZE_SPECIAL_CHARS);
+    $fecha_produccion = filter_input(INPUT_POST, 'fecha_produccion', FILTER_SANITIZE_SPECIAL_CHARS);
+    $fecha_vencimiento = filter_input(INPUT_POST, 'fecha_vencimiento', FILTER_SANITIZE_SPECIAL_CHARS);
 
     // Asegurarse de que las cadenas no sean nulas antes de aplicar trim()
     $nombre_producto = $nombre_producto !== null ? trim($nombre_producto) : '';
-
+    $presentacion = $presentacion !== null ? trim($presentacion) : '';
+    $marca = $marca !== null ? trim($marca) : '';
+    
     // Validaciones más estrictas
-    if (!$id_producto || empty($nombre_producto) || !$precio || !$cantidad) {
+    if (!$id_producto || empty($nombre_producto) || !$precio || !$cantidad || empty($presentacion) || empty($marca) || empty($fecha_produccion) || empty($fecha_vencimiento)) {
         $mensaje = "Todos los campos son obligatorios y deben ser válidos.";
         $tipo_alerta = "danger"; // Alerta de error
     } else {
         // Preparar la consulta de actualización de forma segura
-        $stmt = $conexion->prepare("UPDATE Productos SET nombre_producto = ?, precio = ?, cantidad = ? WHERE id = ?");
+        $stmt = $conexion->prepare("UPDATE Productos SET nombre_producto = ?, precio = ?, cantidad = ?, presentacion = ?, marca = ?, fecha_produccion = ?, fecha_vencimiento = ? WHERE id = ?");
 
         // Verificar si la consulta se preparó correctamente
         if ($stmt) {
-            $stmt->bind_param("sdii", $nombre_producto, $precio, $cantidad, $id_producto); // "sdii" significa: string, double, integer, integer
+            $stmt->bind_param("sdissssi", $nombre_producto, $precio, $cantidad, $presentacion, $marca, $fecha_produccion, $fecha_vencimiento, $id_producto); // "sdissssi" significa: string, double, integer, string, string, string, string, integer
 
             // Ejecutar la consulta y verificar el resultado
             if ($stmt->execute()) {
@@ -50,10 +56,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$conexion->close(); // Cerrar la conexión
+$conexion->close(); // Cerrar la conexión
 ?>
 
-<!-- HTML del formulario para modificar productos -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -88,6 +93,22 @@ $conexion->close(); // Cerrar la conexión
             <div class="form-group">
                 <label for="cantidad">Cantidad</label>
                 <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+            </div>
+            <div class="form-group">
+                <label for="presentacion">Presentación</label>
+                <input type="text" class="form-control" id="presentacion" name="presentacion" required>
+            </div>
+            <div class="form-group">
+                <label for="marca">Marca</label>
+                <input type="text" class="form-control" id="marca" name="marca" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_produccion">Fecha de Producción</label>
+                <input type="date" class="form-control" id="fecha_produccion" name="fecha_produccion" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_vencimiento">Fecha de Vencimiento</label>
+                <input type="date" class="form-control" id="fecha_vencimiento" name="fecha_vencimiento" required>
             </div>
             <button type="submit" class="btn btn-warning">Modificar Producto</button>
             <a href="index.php" class="btn btn-secondary">Volver a la Página Principal</a>
